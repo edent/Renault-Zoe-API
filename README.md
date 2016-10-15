@@ -1,5 +1,5 @@
 # Renault-Zoe-API
-A basic API for getting information about your Renault Zoe Electric Vehicle.
+A basic API for getting information about your Renault Zoe Electric Vehicle.  [Read the original blog post](https://shkspr.mobi/blog/2016/10/reverse-engineering-the-renault-zoe-api).
 
 All these API calls can be found by using the [Renault ZE Services website](https://www.services.renault-ze.com). I am indebted to [this German blog post](http://www.aironaut.ch/my-ze-online-abfragen/) for kicking off this work.  I'd also like to thank Renault for their ["esoteric" use of JavaScript](https://www.services.renault-ze.com/js/main.js)!
 
