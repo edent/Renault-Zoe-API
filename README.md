@@ -355,7 +355,7 @@ Sadly, the Renault API is quite poor compared to BMW's API.  Here's what I'd *lo
 
 * Vehicle status - doors locked, headlights on.
 * Efficiency - last journey, total.
-* Mileage.
+* Mileage (although available in MY Renault API, so included in this script).
 * Physical location.
 
 ## The End Result

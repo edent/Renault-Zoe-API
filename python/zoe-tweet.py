@@ -23,11 +23,11 @@ try:
 except ImportError:
  pass
 
-# API Gateway
+# API Gateway.
 servicesHost = 'https://www.services.renault-ze.com'
 myRenaultHost = 'https://www.renault.co.uk'
 
-# Constants
+# Constants.
 kmToMiles  = 0.621371
 stealthyHeaders = { 'User-Agent': None }
 
@@ -51,11 +51,11 @@ def getMyReanultAccessToken(email,password):
 
 def apiCallMyRenault(mapping,sessionId):
  url = myRenaultHost + '/content/renault_prod/en_GB/index/my-account/jcr:content/subNavigation.ownedvehicles.json'
- cookies = dict([('gig_hasGmid','ver2'), ('X-Mapping-pjobmcgf',mapping), ('JSESSIONID',sessionId)])
+ cookies = dict([('gig_hasGmid', 'ver2'), ('X-Mapping-pjobmcgf', mapping), ('JSESSIONID', sessionId)])
  api_json = requests.get(url, headers=stealthyHeaders, cookies=cookies).json()
  return api_json
 
-# Load Credentials
+# Load credentials.
 in_file = open('credentials.json', 'r')
 credentials = json.load(in_file)
 in_file.close()
@@ -63,19 +63,19 @@ in_file.close()
 # Generate the ZE Services token.
 zeServicesAccessToken = getZEAccessToken(credentials['ZEServicesUsername'], credentials['ZEServicesPassword'])
 
-# Get the VIN
+# Get the VIN.
 vin = credentials['VIN']
 
-# Vehicle Status
+# ZE Services vehicle status.
 status_json = apiCallZEServices('/api/vehicle/' + vin + '/battery')
 
 # Debug
 #print(status_json)
 
-# Generate the My Renault token.
+# Generate the MY Renault token.
 myRenaultAccessToken = getMyReanultAccessToken(credentials['MyRenaultEmail'], credentials['MyRenaultPassword'])
 
-# My Renault
+# MY Renault vehicle status.
 myRenault_json = apiCallMyRenault(myRenaultAccessToken['X-Mapping-pjobmcgf'], myRenaultAccessToken['JSESSIONID'])
 
 # Debug
