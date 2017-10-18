@@ -15,18 +15,20 @@ class MYRenault:
   # Generate the MY Renault token.
   accessToken = self.getAccessToken(email, password)
 
-  # There's only 2 values that are important to confirm we are authenticated.
+  # There's only 2 cookie values that are important to confirm we are authenticated.
+
+  # Renault use a load balancer (vADC) : https://community.brocade.com/t5/vADC-Docs/What-s-the-X-Mapping-cookie-for-and-does-it-constitute-a/ta-p/73638
   self.mapping = accessToken['X-Mapping-pjobmcgf']
+
+  # This links our future requests to our existing login.
   self.sessionId = accessToken['JSESSIONID']
 
  def getAccessToken(self, email, password):
   url = MYRenault.myRenaultHost + '/login-registration/_jcr_content/freeEditorial/columns6/col1-par/signuplogin_0.html'
   payload = {'email':email, 'password':password, 'page':'log-in'}
-  request = requests.post(url, headers=MYRenault.stealthyHeaders, data=payload)
-  return request.cookies
+  return requests.post(url, headers=MYRenault.stealthyHeaders, data=payload).cookies
 
  def apiCall(self):
   url = MYRenault.myRenaultHost + '/content/renault_prod/en_GB/index/my-account/jcr:content/subNavigation.ownedvehicles.json'
   cookies = dict([('gig_hasGmid', 'ver2'), ('X-Mapping-pjobmcgf', self.mapping), ('JSESSIONID', self.sessionId)])
-  api_json = requests.get(url, headers=MYRenault.stealthyHeaders, cookies=cookies).json()
-  return api_json
+  return requests.get(url, headers=MYRenault.stealthyHeaders, cookies=cookies).json()
