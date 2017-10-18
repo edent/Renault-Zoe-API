@@ -56,7 +56,7 @@ if (pluggedStatus):
 else:
  pluggedText  = u'Unplugged'
 
-# We allow the My Renault section to fail gracefully.
+# We allow the MY Renault section to fail gracefully.
 totalMileage     = 0
 
 # Go looking for the specific VIN we have requested.
@@ -68,13 +68,14 @@ for car in myRenault_json['owned']:
 
 # Check the Windows console can display UTF-8 characters.
 if sys.platform != 'win32' or locale.getpreferredencoding() == 'cp65001':
- # Generate the status.
+ # Generate the UTF-8 status (with emojis).
  status  = u'\n🔋 ' + str(battery) + '%'
  status += u'\n🚗 ' + str('%.0f' % round(remaining_range)) + ' miles'
  status += u'\n🔌 ' + pluggedText
  status += u'\n⚡ ' + chargingText
  if totalMileage > 0: status += u'\n🛣️ ' + str(totalMileage) + ' miles (since ' + lastMileageRefresh + ')'
 else:
+ # Generate the ASCII standard text status.
  status  = u'\nBattery: ' + str(battery) + '%'
  status += u'\nRange: ' + str('%.0f' % round(remaining_range)) + ' miles'
  status += u'\nPlugged In: ' + pluggedText

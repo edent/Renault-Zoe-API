@@ -63,7 +63,7 @@ if (pluggedStatus):
 else:
  pluggedText  = u'Unplugged'
 
-# We allow the My Renault section to fail gracefully.
+# We allow the MY Renault section to fail gracefully.
 totalMileage     = 0
 
 # Go looking for the specific VIN we have requested.
@@ -83,8 +83,10 @@ status += u'\n#RenaultZOE'
 
 # Check the Windows console can display UTF-8 characters.
 if sys.platform != 'win32' or locale.getpreferredencoding() == 'cp65001':
+ # Display the UTF-8 status (with emojis).
  print(status)
 else:
+ # Generate an ASCII standard text status.
  altstatus  = u'\nBattery: ' + str(battery) + '%'
  altstatus += u'\nRange: ' + str('%.0f' % round(remaining_range)) + ' miles'
  altstatus += u'\nPlugged In: ' + pluggedText
@@ -95,7 +97,7 @@ else:
 
 # Check if a Twitter library is installed.
 if tweepy is not None:
- # Set Up Twitter
+ # Set up Twitter
  twitter_access_token        = credentials['twitter_access_token']
  twitter_access_token_secret = credentials['twitter_access_token_secret']
  twitter_consumer_key        = credentials['twitter_consumer_key']
