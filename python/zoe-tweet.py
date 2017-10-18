@@ -70,6 +70,7 @@ totalMileage     = 0
 for car in myRenault_json['owned']:
  if car['vin'] == vin:
   totalMileage       = car['mileage']
+  if 'MyRenaultMileageOffset' in credentials: totalMileage += credentials['MyRenaultMileageOffset']
   lastMileageRefresh = car['lastMileageRefresh']
   break
 
