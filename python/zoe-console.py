@@ -17,13 +17,6 @@ import sys
 # We play with encodings so it's good to check what we are set to support.
 import locale
 
-# We ignore Tweepy not being installed.
-try:
- tweepy = None
- import tweepy
-except ImportError:
- pass
-
 # Constants.
 kmToMiles  = 0.621371
 
@@ -69,44 +62,25 @@ totalMileage     = 0
 # Go looking for the specific VIN we have requested.
 for car in myRenault_json['owned']:
  if car['vin'] == vin:
-  totalMileage       = car['mileage']
+  totalMileage     = car['mileage']
   if 'MyRenaultMileageOffset' in credentials: totalMileage += credentials['MyRenaultMileageOffset']
   lastMileageRefresh = car['lastMileageRefresh']
   break
 
-# Generate the status.
-status  = u'\n🔋 ' + str(battery) + '%'
-status += u'\n🚗 ' + str('%.0f' % round(remaining_range)) + ' miles'
-status += u'\n🔌 ' + pluggedText
-status += u'\n⚡ ' + chargingText
-if totalMileage > 0: status += u'\n🛣️ ' + str(totalMileage) + ' miles (since ' + lastMileageRefresh + ')'
-status += u'\n#RenaultZOE'
-
 # Check the Windows console can display UTF-8 characters.
 if sys.platform != 'win32' or locale.getpreferredencoding() == 'cp65001':
- # Display the UTF-8 status (with emojis).
- print(status)
+ # Generate the UTF-8 status (with emojis).
+ status  = u'🔋 ' + str(battery) + '%'
+ status += u'\n🚗 ' + str('%.0f' % round(remaining_range)) + ' miles'
+ status += u'\n🔌 ' + pluggedText
+ status += u'\n⚡ ' + chargingText
+ if totalMileage > 0: status += u'\n🛣️ ' + str(totalMileage) + ' miles (since ' + lastMileageRefresh + ')'
 else:
- # Generate an ASCII standard text status.
- altstatus  = u'\nBattery: ' + str(battery) + '%'
- altstatus += u'\nRange: ' + str('%.0f' % round(remaining_range)) + ' miles'
- altstatus += u'\nPlugged In: ' + pluggedText
- altstatus += u'\nCharging: ' + chargingText
- if totalMileage > 0: altstatus += u'\nMileage: ' + str(totalMileage) + ' miles (since ' + lastMileageRefresh + ')'
- altstatus += u'\n#RenaultZOE'
- print(altstatus)
+ # Generate the ASCII standard text status.
+ status  = u'Battery: ' + str(battery) + '%'
+ status += u'\nRange: ' + str('%.0f' % round(remaining_range)) + ' miles'
+ status += u'\nPlugged In: ' + pluggedText
+ status += u'\nCharging: ' + chargingText
+ if totalMileage > 0: status += u'\nMileage: ' + str(totalMileage) + ' miles (since ' + lastMileageRefresh + ')'
 
-# Check if a Twitter library is installed.
-if tweepy is not None:
- # Set up Twitter
- twitter_access_token        = credentials['twitter_access_token']
- twitter_access_token_secret = credentials['twitter_access_token_secret']
- twitter_consumer_key        = credentials['twitter_consumer_key']
- twitter_consumer_secret     = credentials['twitter_consumer_secret']
-
- auth = tweepy.OAuthHandler(twitter_consumer_key, twitter_consumer_secret)
- auth.set_access_token(twitter_access_token, twitter_access_token_secret)
- twitter = tweepy.API(auth)
- twitter.update_status(status)
-else:
- print('\nTweepy not installed; unable to tweet this.')
+print(status)
