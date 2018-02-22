@@ -96,6 +96,8 @@ The Zoe can be set to warm-up or cool down depending on the last temperate you s
 
 ```
 curl \
+   -X POST \
+   -H 'Content-Type: application/json' \
    -H "Authorization: Bearer AAAA" \
    "https://www.services.renault-ze.com/api/vehicle/VVVV/air-conditioning"
 ```
@@ -170,6 +172,8 @@ You may have set your Zoe only to charge at specific times - perhaps to take adv
 
 ```
 curl \
+   -X POST \
+   -H 'Content-Type: application/json' \
    -H "Authorization: Bearer AAAA" \
    https://www.services.renault-ze.com/api/vehicle/VVVV/charge
 ```
