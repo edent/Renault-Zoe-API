@@ -82,11 +82,14 @@ This gets us:
 	"charge_level": 100,
 	"remaining_range": 124.0,
 	"last_update": 1476472742000,
-	"charging_point": "INVALID"
+	"charging_point": "INVALID",
+	"remaining_time": 750
 }
 ```
 
-A few point to note. The `remaining_range` is in Kilometres.  The `last_update` is a Unix timestamp.
+A few point to note. The `remaining_range` is in Kilometres.  The `last_update` is a Unix timestamp. The `remaining_time` is in minutes.
+The `charging_point` is available only when `plugged` is true.
+The `remaining_time` is available only when `charging` is true.
 
 ## Preconditioning
 
