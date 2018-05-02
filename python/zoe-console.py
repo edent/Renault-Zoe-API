@@ -34,12 +34,6 @@ zeServices = ZEServices(credentials['ZEServicesUsername'], credentials['ZEServic
 # ZE Services vehicle status.
 zeServices_json = zeServices.apiCall('/api/vehicle/' + vin + '/battery')
 
-# Create a MY Renault object.
-myRenault = MYRenault(credentials['MyRenaultEmail'], credentials['MyRenaultPassword'])
-
-# MY Renault vehicle status.
-myRenault_json = myRenault.apiCall()
-
 battery          = zeServices_json['charge_level']
 remaining_range  = kmToMiles * zeServices_json['remaining_range']
 chargingStatus   = zeServices_json['charging']
@@ -56,16 +50,26 @@ if (pluggedStatus):
 else:
  pluggedText  = u'Unplugged'
 
-# We allow the MY Renault section to fail gracefully.
-totalMileage     = 0
+# (Optionally) Create a MY Renault object.
+if 'MyRenaultEmail' in credentials and 'MyRenaultPassword' in credentials:
+ myRenault = MYRenault(credentials['MyRenaultEmail'], credentials['MyRenaultPassword'])
 
-# Go looking for the specific VIN we have requested.
-for car in myRenault_json['owned']:
- if car['vin'] == vin:
-  totalMileage     = car['mileage']
-  if 'MyRenaultMileageOffset' in credentials: totalMileage += credentials['MyRenaultMileageOffset']
-  lastMileageRefresh = car['lastMileageRefresh']
-  break
+ # MY Renault vehicle status.
+ myRenault_json = myRenault.apiCall()
+
+ # We allow the MY Renault section to fail gracefully (if it cannot find our VIN).
+ totalMileage     = 0
+
+ # Go looking for the specific VIN we have requested.
+ for car in myRenault_json['owned']:
+  if car['vin'] == vin:
+   totalMileage     = car['mileage']
+   if 'MyRenaultMileageOffset' in credentials: totalMileage += credentials['MyRenaultMileageOffset']
+   lastMileageRefresh = car['lastMileageRefresh']
+   break
+else:
+ # We allow the MY Renault section to fail gracefully (if we have not set it up).
+ totalMileage     = 0
 
 # Check the Windows console can display UTF-8 characters.
 if sys.platform != 'win32' or locale.getpreferredencoding() == 'cp65001':
