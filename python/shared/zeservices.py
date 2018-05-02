@@ -42,26 +42,25 @@ class ZEServices:
    # Parse it as JSON.
    token = json.loads(jsonPayload)
 
-   # Is the token still valid?
-   if (time.gmtime() < time.gmtime(token['exp'])):
-    # Just return the token as-is.
-    return tokenData['token']
-   # No, it expired.
-   else:
-     url = ZEServices.servicesHost + '/api/user/token/refresh'
+   # Is the token still valid? If not, refresh it.
+   if(time.gmtime() > time.gmtime(token['exp'])):
+    url = ZEServices.servicesHost + '/api/user/token/refresh'
 
-     # We just send the file as we are not adding anything else into it, if this changes the following 2 key-value pairs are mandatory.
-     #payload = {'refresh_token': tokenData['refresh_token'], 'token': tokenData['token']}
-     payload = tokenData
+    # We just send the file as we are not adding anything else into it, if this changes the following 2 key-value pairs are mandatory.
+    #payload = {'refresh_token': tokenData['refresh_token'], 'token': tokenData['token']}
+    payload = tokenData
 
-     response = requests.post(url, headers=ZEServices.stealthyHeaders, json=payload).json()
+    response = requests.post(url, headers=ZEServices.stealthyHeaders, json=payload).json()
 
-     # Overwrite the current token with this newly returned one.
-     tokenData['token'] = response['token']
+    # Overwrite the current token with this newly returned one.
+    tokenData['token'] = response['token']
 
-     # Save this refresh token and new JWT token so we are nicer to Renault's authentication server.
-     with open('credentials_token.json', 'w') as outfile:
-      json.dump(tokenData, outfile)
+    # Save this refresh token and new JWT token so we are nicer to Renault's authentication server.
+    with open('credentials_token.json', 'w') as outfile:
+     json.dump(tokenData, outfile)
+
+   # Return the token (as-is if valid, refreshed if not).
+   return tokenData['token']
 
   # We have never cached an access token before.
   except FileNotFoundError:
