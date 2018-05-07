@@ -36,19 +36,10 @@ zeServices_json = zeServices.apiCall('/api/vehicle/' + vin + '/battery')
 
 battery          = zeServices_json['charge_level']
 remaining_range  = kmToMiles * zeServices_json['remaining_range']
-chargingStatus   = zeServices_json['charging']
-pluggedStatus    = zeServices_json['plugged']
+charging         = zeServices_json['charging']
+pluggedIn        = zeServices_json['plugged']
 updateTime       = zeServices_json['last_update']
-
-if (chargingStatus):
- chargingText = u'Charging'
-else:
- chargingText = u'Not charging'
-
-if (pluggedStatus):
- pluggedText  = u'Plugged in'
-else:
- pluggedText  = u'Unplugged'
+if charging: remaining_time = zeServices_json['remaining_time'] if 'remaining_time' in zeServices_json else None
 
 # (Optionally) Create a MY Renault object.
 if 'MyRenaultEmail' in credentials and 'MyRenaultPassword' in credentials:
@@ -74,17 +65,17 @@ else:
 # Check the Windows console can display UTF-8 characters.
 if sys.platform != 'win32' or locale.getpreferredencoding() == 'cp65001':
  # Generate the UTF-8 status (with emojis).
- status  = u'🔋 ' + str(battery) + '%'
+ status  = u'\n🔋 ' + str(battery) + '%'
  status += u'\n🚗 ' + str('%.0f' % round(remaining_range)) + ' miles'
- status += u'\n🔌 ' + pluggedText
- status += u'\n⚡ ' + chargingText
+ status += u'\n🔌 ' + ('Plugged in' if pluggedIn else 'Unplugged')
+ status += u'\n⚡ ' + ('Charging ' + ('(' + str(remaining_time) + ' minutes remain)' if remaining_time is not None else '') if charging else 'Not charging')
  if totalMileage > 0: status += u'\n🛣️ ' + str(totalMileage) + ' miles (since ' + lastMileageRefresh + ')'
 else:
  # Generate the ASCII standard text status.
- status  = u'Battery: ' + str(battery) + '%'
- status += u'\nRange: ' + str('%.0f' % round(remaining_range)) + ' miles'
- status += u'\nPlugged In: ' + pluggedText
- status += u'\nCharging: ' + chargingText
+ status  = '\nBattery: ' + str(battery) + '%'
+ status += '\nRange: ' + str('%.0f' % round(remaining_range)) + ' miles'
+ status += '\nPlugged In: ' + ('Plugged in' if pluggedIn else 'Unplugged')
+ status += '\nCharging: ' + ('Charging ' + ('(' + str(remaining_time) + ' minutes remain)' if remaining_time is not None else '') if charging else 'Not charging')
  if totalMileage > 0: status += u'\nMileage: ' + str(totalMileage) + ' miles (since ' + lastMileageRefresh + ')'
 
 print(status)

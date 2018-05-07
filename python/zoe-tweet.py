@@ -41,21 +41,12 @@ zeServices = ZEServices(credentials['ZEServicesUsername'], credentials['ZEServic
 # ZE Services vehicle status.
 zeServices_json = zeServices.apiCall('/api/vehicle/' + vin + '/battery')
 
-battery          = zeServices_json['charge_level']
-remaining_range  = kmToMiles * zeServices_json['remaining_range']
-chargingStatus   = zeServices_json['charging']
-pluggedStatus    = zeServices_json['plugged']
-updateTime       = zeServices_json['last_update']
-
-if (chargingStatus):
- chargingText = u'Charging'
-else:
- chargingText = u'Not charging'
-
-if (pluggedStatus):
- pluggedText  = u'Plugged in'
-else:
- pluggedText  = u'Unplugged'
+battery         = zeServices_json['charge_level']
+remaining_range = kmToMiles * zeServices_json['remaining_range']
+charging        = zeServices_json['charging']
+pluggedIn       = zeServices_json['plugged']
+updateTime      = zeServices_json['last_update']
+if charging: remaining_time = zeServices_json['remaining_time'] if 'remaining_time' in zeServices_json else None
 
 # (Optionally) Create a MY Renault object.
 if 'MyRenaultEmail' in credentials and 'MyRenaultPassword' in credentials:
@@ -81,10 +72,10 @@ else:
 # Generate the status.
 status  = u'\n🔋 ' + str(battery) + '%'
 status += u'\n🚗 ' + str('%.0f' % round(remaining_range)) + ' miles'
-status += u'\n🔌 ' + pluggedText
-status += u'\n⚡ ' + chargingText
+status += u'\n🔌 ' + ('Plugged in' if pluggedIn else 'Unplugged')
+status += u'\n⚡ ' + ('Charging ' + ('(' + str(remaining_time) + ' minutes remain)' if remaining_time is not None else '') if charging else 'Not charging')
 if totalMileage > 0: status += u'\n🛣️ ' + str(totalMileage) + ' miles (since ' + lastMileageRefresh + ')'
-status += u'\n#RenaultZOE'
+status += '\n#RenaultZOE'
 
 # Check the Windows console can display UTF-8 characters.
 if sys.platform != 'win32' or locale.getpreferredencoding() == 'cp65001':
@@ -92,12 +83,12 @@ if sys.platform != 'win32' or locale.getpreferredencoding() == 'cp65001':
  print(status)
 else:
  # Generate an ASCII standard text status.
- altstatus  = u'\nBattery: ' + str(battery) + '%'
- altstatus += u'\nRange: ' + str('%.0f' % round(remaining_range)) + ' miles'
- altstatus += u'\nPlugged In: ' + pluggedText
- altstatus += u'\nCharging: ' + chargingText
+ altstatus  = '\nBattery: ' + str(battery) + '%'
+ altstatus += '\nRange: ' + str('%.0f' % round(remaining_range)) + ' miles'
+ altstatus += '\nPlugged In: ' + ('Plugged in' if pluggedIn else 'Unplugged')
+ altstatus += '\nCharging: ' + ('Charging ' + ('(' + str(remaining_time) + ' minutes remain)' if remaining_time is not None else '') if charging else 'Not charging')
  if totalMileage > 0: altstatus += u'\nMileage: ' + str(totalMileage) + ' miles (since ' + lastMileageRefresh + ')'
- altstatus += u'\n#RenaultZOE'
+ altstatus += '\n#RenaultZOE'
  print(altstatus)
 
 # Check if a Twitter library is installed.
