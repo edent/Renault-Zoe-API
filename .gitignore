@@ -1,2 +1,3 @@
-python/credentials.json
-python/shared/__pycache__/
+/python/shared/__pycache__/
+/python/credentials.json
+/python/credentials_token.json

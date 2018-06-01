@@ -8,27 +8,34 @@ class MYRenault:
  # API Gateway.
  myRenaultHost = 'https://www.renault.co.uk'
 
- # This prevents the requests module from creating its own user-agent.
- stealthyHeaders = { 'User-Agent': None }
+ # This prevents the requests module from creating its own user-agent (and ask to not be included in analytics).
+ stealthyHeaders = {'User-Agent': None, 'DNT':'1'}
 
  def __init__(self, email, password):
-  # Generate the MY Renault token.
-  accessToken = self.getAccessToken(email, password)
 
-  # There's only 2 cookie values that are important to confirm we are authenticated.
+  # We now need to be assigned a session *before* we can login.
+  self.getSession()
 
-  # Renault use a load balancer (vADC) : https://community.brocade.com/t5/vADC-Docs/What-s-the-X-Mapping-cookie-for-and-does-it-constitute-a/ta-p/73638
-  self.mapping = accessToken['X-Mapping-pjobmcgf']
+  # Authenticate with MY Renault.
+  if not self.login(email, password):
+   raise ValueError('Failed to login to MyRenault')
 
-  # This links our future requests to our existing login.
-  self.sessionId = accessToken['JSESSIONID']
+ def getSession(self):
+  url = MYRenault.myRenaultHost + '/login-registration.html'
 
- def getAccessToken(self, email, password):
+  # There's only 2 cookie values that are important to maintain session once we are authenticated.
+  cookies = requests.get(url, headers=MYRenault.stealthyHeaders).cookies
+
+  # X-Mapping - Renault use a load balancer (vADC) to specify an assigned server, https://community.brocade.com/t5/vADC-Docs/What-s-the-X-Mapping-cookie-for-and-does-it-constitute-a/ta-p/73638
+  # JSESSIONID - This links our future requests to our existing session on this server.
+  self.sessionCookies = {'X-Mapping-pjobmcgf': cookies['X-Mapping-pjobmcgf'], 'JSESSIONID': cookies['JSESSIONID']}
+
+ def login(self, email, password):
   url = MYRenault.myRenaultHost + '/login-registration/_jcr_content/freeEditorial/columns6/col1-par/signuplogin_0.html'
   payload = {'email':email, 'password':password, 'page':'log-in'}
-  return requests.post(url, headers=MYRenault.stealthyHeaders, data=payload).cookies
+  response = requests.post(url, headers=MYRenault.stealthyHeaders, cookies=self.sessionCookies, data=payload).json()
+  return (('status_code' in response) and (response['status_code'] == 'login_success'))
 
  def apiCall(self):
   url = MYRenault.myRenaultHost + '/content/renault_prod/en_GB/index/my-account/jcr:content/subNavigation.ownedvehicles.json'
-  cookies = dict([('gig_hasGmid', 'ver2'), ('X-Mapping-pjobmcgf', self.mapping), ('JSESSIONID', self.sessionId)])
-  return requests.get(url, headers=MYRenault.stealthyHeaders, cookies=cookies).json()
+  return requests.get(url, headers=MYRenault.stealthyHeaders, cookies=self.sessionCookies).json()
