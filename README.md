@@ -354,6 +354,33 @@ curl \
    'https://www.services.renault-ze.com/api/vehicle/VVVV/charge/scheduler/onboard'
 ```
 
+## Refreshing the authorization token after expiry
+Refreshing a token can be done easily and without username or password. You need your expired token as well as the refresh_token that was issued at login.
+```
+curl \
+   -X POST \
+   -H 'Authorization: Bearer eyJAAA.eyJBBB.CCC' \
+   -d '{"token":"eyJAAA.eyJBBB.CCC","refresh_token":"DDDD"}' \
+   'https://www.services.renault-ze.com/api/user/token/refresh'
+```
+The answer is an updated token:
+```
+{"token":"eyJDDD.eyJEEE.FFF"}
+```
+Note that the refresh will work multiple times using the same refresh_token, so keep that one at hand.
+
+### How do I know if my token expired?
+The token itself contains this information. It is in JSON Web Token format, i.e. it consists of three parts, each separated by a period. The middle part (called the payload) is a base64-encoded JSON text which contains the following fields:
+```
+{
+  "sub": "myzelogin@example.com",
+  "jti": "1111222233334444aaaabbbbccccdddd",
+  "iat": 1527613751,
+  "exp": 1527649751
+}
+```
+The `exp` field is the UNIX timestamp of the token expiry. The refreshed token will have the same `sub` and `jti` values.
+
 ## That's all folks?
 There are a few other API calls - mostly around registering and removing vehicles, and updating personal details.
 
