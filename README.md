@@ -3,6 +3,9 @@ A basic API for getting information about your Renault Zoe Electric Vehicle.  [R
 
 All these API calls can be found by using the [Renault ZE Services website](https://www.services.renault-ze.com). I am indebted to [this German blog post](http://www.aironaut.ch/my-ze-online-abfragen/) for kicking off this work.  I'd also like to thank Renault for their ["esoteric" use of JavaScript](https://www.services.renault-ze.com/js/main.js)!
 
+[![Buy me a coffee](https://www.ko-fi.com/img/donate_sm.png)](https://ko-fi.com/edent)
+
+
 ## What's Available?
 This API is fairly limited, here's what you can do with it:
 
