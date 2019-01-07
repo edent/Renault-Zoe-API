@@ -37,7 +37,15 @@ class ZEServices:
    if len(splitToken) != 3: raise ValueError('Not a well formed JWT token')
 
    # Get the JSON payload of the JWT token.
-   jsonPayload = base64.b64decode(splitToken[1])
+   b64payload = splitToken[1]
+   
+   # Check the base64 padding.
+   missing_padding = len(b64payload) % 4
+   if missing_padding:
+      b64payload += '='* (4 - missing_padding)
+
+   # Decode the base64 JWT token.
+   jsonPayload = base64.b64decode(b64payload)
 
    # Parse it as JSON.
    token = json.loads(jsonPayload)
