@@ -84,7 +84,7 @@ class ZEServices:
    api_json = ses.post(url, headers=ZEServices.stealthyHeaders, json=payload).json()
 
    # We do not want to save all the user data returned on login, so we create a smaller file of just the mandatory information.
-   tokenData = {'refreshToken' : ses.cookies['refreshToken'].value, 'xsrfToken' : api_json['xsrfToken'], 'token' : api_json['token']}
+   tokenData = {'refreshToken' : ses.cookies['refreshToken'], 'xsrfToken' : api_json['xsrfToken'], 'token' : api_json['token']}
 
    # Save this refresh token and JWT token for future use so we are nicer to Renault's authentication server.
    with open('credentials_token.json', 'w') as outfile:
