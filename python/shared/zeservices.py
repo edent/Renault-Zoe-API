@@ -77,7 +77,7 @@ class ZEServices:
    return tokenData['token']
 
   # We have never cached an access token before.
-  except FileNotFoundError:
+  except (FileNotFoundError, json.decoder.JSONDecodeError):
    url = ZEServices.servicesHost + '/api/user/login'
    payload = {'username':user, 'password':password}
    ses = requests.Session()
