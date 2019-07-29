@@ -116,12 +116,12 @@ async def mainwithsession(session):
     credentials = json.load(in_file)
     in_file.close()
 
-    #android_config = await get_android_config(session, credentials['RenaultServiceLocation'])
-    #with open('android_config.json', 'w') as outfile:
-    #    json.dump(android_config, outfile)
-    in_file = open('android_config.json', 'r')
-    android_config = json.load(in_file)
-    in_file.close()
+    android_config = await get_android_config(session, credentials['RenaultServiceLocation'])
+    with open('android_config.json', 'w') as outfile:
+        json.dump(android_config, outfile)
+    #in_file = open('android_config.json', 'r')
+    #android_config = json.load(in_file)
+    #in_file.close()
     print('android_config')
     
     gigyarooturl = android_config['servers']['gigyaProd']['target']
@@ -140,12 +140,12 @@ async def mainwithsession(session):
     
     gigyacookievalue = gigya_session['sessionInfo']['cookieValue']
 
-    #gigya_account = await get_gigyaaccount(session, gigyarooturl, gigyaapikey, gigyacookievalue)
-    #with open('gigya_account.json', 'w') as outfile:
-    #    json.dump(gigya_account, outfile)
-    in_file = open('gigya_account.json', 'r')
-    gigya_account = json.load(in_file)
-    in_file.close()
+    gigya_account = await get_gigyaaccount(session, gigyarooturl, gigyaapikey, gigyacookievalue)
+    with open('gigya_account.json', 'w') as outfile:
+        json.dump(gigya_account, outfile)
+    #in_file = open('gigya_account.json', 'r')
+    #gigya_account = json.load(in_file)
+    #in_file.close()
     print('gigya_account')
 
     gigya_jwt = await get_gigyajwt(session, gigyarooturl, gigyaapikey, gigyacookievalue)
@@ -160,12 +160,12 @@ async def mainwithsession(session):
     
     kamereonpersonid = gigya_account['data']['personId']
     
-    #kamereon_person = await get_kamereonperson(session, kamereonrooturl, kamereonapikey, gigya_jwttoken, kamereonpersonid)
-    #with open('kamereon_person.json', 'w') as outfile:
-    #    json.dump(kamereon_person, outfile)
-    in_file = open('kamereon_person.json', 'r')
-    kamereon_person = json.load(in_file)
-    in_file.close()
+    kamereon_person = await get_kamereonperson(session, kamereonrooturl, kamereonapikey, gigya_jwttoken, kamereonpersonid)
+    with open('kamereon_person.json', 'w') as outfile:
+        json.dump(kamereon_person, outfile)
+    #in_file = open('kamereon_person.json', 'r')
+    #kamereon_person = json.load(in_file)
+    #in_file.close()
     print('kamereon_person')
 
     kamereonaccountid = kamereon_person['accounts'][0]['accountId']
